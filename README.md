@@ -1,6 +1,6 @@
 # action-ahk2exe
 
-This action compiles AutoHotkey scripts into EXEs using [Ahk2Exe](https://www.autohotkey.com/docs/Scripts.htm#ahk2exe).
+Github action to compile AutoHotkey scripts into EXEs using [Ahk2Exe](https://www.autohotkey.com/docs/Scripts.htm#ahk2exe).
 
 # Usage
 
