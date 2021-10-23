@@ -14,7 +14,7 @@ runs-on: windows-latest
 steps:
   - name: Compile with Ahk2Exe
     id: ahk2exe
-    uses: cennis91/action-ahk2exe@v1
+    uses: cennis91/action-ahk2exe@main
     with:
       in: src/example.ahk
 ```
@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Compile with Ahk2Exe
-        uses: cennis91/action-ahk2exe@v1
+        uses: cennis91/action-ahk2exe@main
         id: ahk2exe
         with:
           in: src/example.ahk
