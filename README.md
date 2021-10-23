@@ -1,1 +1,1 @@
-# ahk2exe-action
+# action-ahk2exe

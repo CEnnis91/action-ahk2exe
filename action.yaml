@@ -1,0 +1,82 @@
+name: Compile AutoHotkey Script
+author: CEnnis91
+description: Compiles AutoHotkey scripts to EXEs using Ahk2Exe
+
+branding:
+  icon: 'package'
+  color: 'blue'
+
+inputs:
+  in:
+    description: The path and name of the script to compile.
+    required: true
+  out:
+    description: The path\name of the output .exe to be created. Default is the directory\base_name of the input file plus extension of .exe.
+    required: false
+    default: ''
+  icon:
+    description: The icon file to be used.
+    required: false
+    default: ''
+  cp:
+    description: Overrides the default codepage used to read script files.
+    required: false
+    default: ''
+  base:
+    description: The base file to be used (a .bin file).
+    required: false
+    default: 'Unicode 64-bit.bin'
+  compress:
+    description: Compress the exe? 0 = no, 1 = use MPRESS if present, 2 = use UPX if present.
+    required: false
+    default: ''
+  resourceid:
+    description: Assigns a non-standard resource ID to be used for the main script for compilations which use an .exe base file.
+    required: false
+    default: ''
+
+outputs:
+  binary:
+    description: The compiled AutoHotkey binary
+    value: ${{ steps.compile.outputs.binary }}
+  directory:
+    description: The base directory of the installed AutoHotkey
+    value: ${{ steps.install.outputs.directory }}
+  version:
+    description: The version of the installed AutoHotkey
+    value: ${{ steps.install.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check Operating System
+      shell: bash
+      run: |
+        if [[ "$RUNNER_OS" != 'Windows' ]]; then
+          echo "::error ::${RUNNER_OS} is not supported, you must use Windows."
+          exit 1
+        fi
+
+    - name: Install Scoop with Extras
+      shell: pwsh
+      run: |
+        iwr -useb get.scoop.sh | iex
+        scoop bucket add extras
+        Write-Output ('Path=' + $env:Path + ';' + $env:UserProfile + '\scoop\shims') >> $env:GITHUB_ENV
+
+    - name: Install AutoHotkey
+      id: install
+      shell: pwsh
+      run: |
+        scoop install autohotkey
+        $directory = (scoop info autohotkey | findstr 'apps\autohotkey').split(' ')[-1]
+        $version = (scoop info autohotkey | findstr 'Version:').split(' ',2)[1]
+
+        echo "::set-output name=directory::$directory"
+        echo "::set-output name=version::$version"
+        echo "::notice ::Successfully installed AutoHotkey ${version} from Scoop."
+
+    - name: Compile Script
+      id: compile
+      shell: pwsh
+      run: ${{ github.action_path }}/src/compile.ps1
