@@ -1,6 +1,6 @@
 name: Compile AutoHotkey Script
 author: CEnnis91
-description: Compiles AutoHotkey scripts to EXEs using Ahk2Exe
+description: Compiles AutoHotkey scripts into EXEs using Ahk2Exe
 
 branding:
   icon: 'package'
