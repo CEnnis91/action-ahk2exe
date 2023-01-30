@@ -72,7 +72,8 @@ runs:
 
         $ahk = (scoop which autohotkey)
         $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
-        & $ahk $directory\UX\install-ahk2exe.ahk /auto
+        Invoke-Expression "$ahk $directory\UX\install-ahk2exe.ahk /auto"
+        dir $directory
 
         $version = (scoop info autohotkey).Version
 
@@ -118,6 +119,10 @@ runs:
             }
           }
         }
+
+        dir "${{ steps.install.outputs.directory }}"
+        Start-Sleep -Seconds 5
+        dir "${{ steps.install.outputs.directory }}"
 
         Invoke-Expression "${{ steps.install.outputs.directory }}\Compiler\Ahk2Exe.exe $($args -join ' ')" | Out-String -OutVariable output
 
