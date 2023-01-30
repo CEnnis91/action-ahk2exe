@@ -86,13 +86,10 @@ runs:
       run: |
         $ErrorActionPreference = 'Stop'
 
-        $ahk = (scoop which autohotkey)
-        $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
-
         $args = @()
         $with = @{
           'in' = "${{ inputs.in }}"; 'out' = "${{ inputs.out }}"; 'icon' = "${{ inputs.icon }}";
-          'cp' = "${{ inputs.cp }}"; 'base' = "$directory\v2\${{ inputs.base }}"; 'compress' = "${{ inputs.compress }}";
+          'cp' = "${{ inputs.cp }}"; 'base' = "${{ inputs.base }}"; 'compress' = "${{ inputs.compress }}";
           'resourceid' = "${{ inputs.resourceid }}";
         }
 
@@ -105,7 +102,7 @@ runs:
                 $with["$key"] = Resolve-Path -Path $with["$key"]
               }
               { @('base') -contains $_ } {
-                $with["$key"] = Resolve-Path -Path "${{ steps.install.outputs.directory }}\Compiler\$($with["$key"])"
+                $with["$key"] = Resolve-Path -Path "${{ steps.install.outputs.directory }}\v2\$($with["$key"])"
               }
               { @('out') -contains $_ } {
                 $with["$key"] = Join-Path $pwd $with["$key"]
