@@ -69,8 +69,12 @@ runs:
       shell: pwsh
       run: |
         scoop install autohotkey
-        $directory = (scoop info autohotkey | findstr 'apps\autohotkey').split(' ')[-1]
-        $version = (scoop info autohotkey | findstr 'Version:').split(' ', 2)[1]
+
+        $ahk = (scoop which autohotkey)
+        $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
+        & $ahk $directory\UX\install-ahk2exe.ahk /auto
+
+        $version = (scoop info autohotkey).Version
 
         echo "::set-output name=directory::$directory"
         echo "::set-output name=version::$version"
@@ -115,7 +119,9 @@ runs:
           }
         }
 
-        Invoke-Expression "ahk2exe.exe $($args -join ' ')" | Out-String -OutVariable output
+        $ahk = (scoop which autohotkey)
+        $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
+        Invoke-Expression "$directory\Compiler\Ahk2Exe.exe $($args -join ' ')" | Out-String -OutVariable output
 
         $binary = $output.Split([Environment]::NewLine).Where({ $_.contains('exe') })
         echo "::set-output name=binary::$binary"
