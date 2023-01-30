@@ -76,8 +76,8 @@ runs:
 
         $version = (scoop info autohotkey).Version
 
-        echo "directory=$directory" >> $GITHUB_OUTPUT
-        echo "version=$version" >> $GITHUB_OUTPUT
+        echo "::set-output name=directory::$directory"
+        echo "::set-output name=version::$version"
         echo "::notice ::Successfully installed AutoHotkey ${version} from Scoop."
 
     - name: Compile Script
