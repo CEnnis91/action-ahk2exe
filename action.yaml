@@ -71,7 +71,7 @@ runs:
       run: |
         scoop install autohotkey1.1
         $ahk = (scoop which autohotkey)
-        $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
+        $directory = (Resolve-Path (Split-Path -Path $ahk)).Path
         $version = (scoop info autohotkey).Version
 
         echo "::set-output name=directory::$directory"
