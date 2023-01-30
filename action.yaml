@@ -25,7 +25,7 @@ inputs:
   base:
     description: The base file to be used (a .bin or .exe file).
     required: false
-    default: 'AutoHotkey64.exe'
+    default: 'Unicode 64-bit.bin'
   compress:
     description: Compress the exe? 0 = no, 1 = use MPRESS if present, 2 = use UPX if present.
     required: false
@@ -62,19 +62,16 @@ runs:
       run: |
         iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
         scoop bucket add extras
+        scoop bucket add versions
         Write-Output ('Path=' + $env:Path + ';' + $env:UserProfile + '\scoop\shims') >> $env:GITHUB_ENV
 
     - name: Install AutoHotkey
       id: install
       shell: pwsh
       run: |
-        scoop install autohotkey
-
+        scoop install autohotkey1.1
         $ahk = (scoop which autohotkey)
         $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
-        Invoke-Expression "$ahk $directory\UX\install-ahk2exe.ahk /auto"
-        dir $directory
-
         $version = (scoop info autohotkey).Version
 
         echo "::set-output name=directory::$directory"
@@ -103,7 +100,7 @@ runs:
                 $with["$key"] = Resolve-Path -Path $with["$key"]
               }
               { @('base') -contains $_ } {
-                $with["$key"] = Resolve-Path -Path "${{ steps.install.outputs.directory }}\v2\$($with["$key"])"
+                $with["$key"] = Resolve-Path -Path "${{ steps.install.outputs.directory }}\Compiler\$($with["$key"])"
               }
               { @('out') -contains $_ } {
                 $with["$key"] = Join-Path $pwd $with["$key"]
@@ -120,11 +117,7 @@ runs:
           }
         }
 
-        dir "${{ steps.install.outputs.directory }}"
-        Start-Sleep -Seconds 5
-        dir "${{ steps.install.outputs.directory }}"
-
-        Invoke-Expression "${{ steps.install.outputs.directory }}\Compiler\Ahk2Exe.exe $($args -join ' ')" | Out-String -OutVariable output
+        Invoke-Expression "ahk2exe.exe $($args -join ' ')" | Out-String -OutVariable output
 
         $binary = $output.Split([Environment]::NewLine).Where({ $_.contains('exe') })
         echo "::set-output name=binary::$binary"
