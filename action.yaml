@@ -63,6 +63,7 @@ runs:
         iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
         scoop bucket add extras
         scoop bucket add versions
+        scoop install zip
         Write-Output ('Path=' + $env:Path + ';' + $env:UserProfile + '\scoop\shims') >> $env:GITHUB_ENV
 
     - name: Install AutoHotkey
