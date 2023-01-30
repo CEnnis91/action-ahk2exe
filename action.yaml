@@ -23,9 +23,9 @@ inputs:
     required: false
     default: ''
   base:
-    description: The base file to be used (a .bin file).
+    description: The base file to be used (a .bin or .exe file).
     required: false
-    default: 'Unicode 64-bit.bin'
+    default: 'AutoHotkey64.exe'
   compress:
     description: Compress the exe? 0 = no, 1 = use MPRESS if present, 2 = use UPX if present.
     required: false
@@ -86,10 +86,13 @@ runs:
       run: |
         $ErrorActionPreference = 'Stop'
 
+        $ahk = (scoop which autohotkey)
+        $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
+
         $args = @()
         $with = @{
           'in' = "${{ inputs.in }}"; 'out' = "${{ inputs.out }}"; 'icon' = "${{ inputs.icon }}";
-          'cp' = "${{ inputs.cp }}"; 'base' = "${{ inputs.base }}"; 'compress' = "${{ inputs.compress }}";
+          'cp' = "${{ inputs.cp }}"; 'base' = "$directory\v2\${{ inputs.base }}"; 'compress' = "${{ inputs.compress }}";
           'resourceid' = "${{ inputs.resourceid }}";
         }
 
@@ -119,8 +122,6 @@ runs:
           }
         }
 
-        $ahk = (scoop which autohotkey)
-        $directory = (Resolve-Path (Split-Path -Path (Split-Path -Path $ahk))).Path
         Invoke-Expression "$directory\Compiler\Ahk2Exe.exe $($args -join ' ')" | Out-String -OutVariable output
 
         $binary = $output.Split([Environment]::NewLine).Where({ $_.contains('exe') })
