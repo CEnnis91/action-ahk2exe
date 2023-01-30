@@ -60,7 +60,7 @@ runs:
     - name: Install Scoop with Extras
       shell: pwsh
       run: |
-        iwr -useb get.scoop.sh | iex
+        iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
         scoop bucket add extras
         Write-Output ('Path=' + $env:Path + ';' + $env:UserProfile + '\scoop\shims') >> $env:GITHUB_ENV
 
