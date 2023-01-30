@@ -76,8 +76,8 @@ runs:
 
         $version = (scoop info autohotkey).Version
 
-        echo "::set-output name=directory::$directory"
-        echo "::set-output name=version::$version"
+        echo "directory=$directory" >> $GITHUB_OUTPUT
+        echo "version=$version" >> $GITHUB_OUTPUT
         echo "::notice ::Successfully installed AutoHotkey ${version} from Scoop."
 
     - name: Compile Script
@@ -119,7 +119,7 @@ runs:
           }
         }
 
-        Invoke-Expression "$directory\Compiler\Ahk2Exe.exe $($args -join ' ')" | Out-String -OutVariable output
+        Invoke-Expression "${{ steps.install.outputs.directory }}\Compiler\Ahk2Exe.exe $($args -join ' ')" | Out-String -OutVariable output
 
         $binary = $output.Split([Environment]::NewLine).Where({ $_.contains('exe') })
         echo "::set-output name=binary::$binary"
